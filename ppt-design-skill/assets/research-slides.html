@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>연구보고서형 슬라이드</title>
+<style>
+/* ─────────────────────────────────────────────
+   디자인 토큰 — 연구보고서형 (민트/딥틸)
+   색·폰트 수정은 여기만 고친다
+   ───────────────────────────────────────────── */
+:root{
+  --deep:#0F3537;      /* 본문·제목·푸터 바 */
+  --accent:#037A76;    /* 카드 제목, 라벨, 차트 주계열 */
+  --mint1:#ACD9C9;     /* 아이콘 원형, 알약 */
+  --mint2:#A2D7CA;     /* 차트 보조 계열 */
+  --mint3:#D1ECE1;     /* 하이라이트 카드, 하단 띠 */
+  --card:#FFFFFF;
+  --line:#CDCECD;
+
+  /* 한글은 Pretendard, 숫자·영문은 Libre Franklin.
+     한글 자료면 Pretendard로 통일하는 편이 안전하다 */
+  --font:"Pretendard","Libre Franklin",-apple-system,"Apple SD Gothic Neo",
+         "Malgun Gothic","Noto Sans KR",sans-serif;
+
+  --t1:70px;  /* 표지 제목 */
+  --t2:48px;  /* 슬라이드 제목 */
+  --t3:20px;  /* 리드문 */
+  --t4:17px;  /* 카드 제목 */
+  --t5:14px;  /* 본문 */
+  --t6:10px;  /* 푸터·캡션 */
+
+  --pad:40px;
+  --gap:16px;
+  --radius:16px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#E9EDEB;font-family:var(--font);display:flex;flex-direction:column;
+     align-items:center;gap:24px;padding:24px}
+.slide{width:1280px;height:720px;color:var(--deep);padding:var(--pad);flex:none;
+       display:flex;flex-direction:column;position:relative;overflow:hidden;
+       background:
+         radial-gradient(circle at 92% 8%, var(--mint3) 0%, transparent 38%),
+         radial-gradient(circle at 6% 94%, var(--mint3) 0%, transparent 32%),
+         #FFFFFF}
+@media (max-width:1340px){
+  .slide{transform:scale(calc((100vw - 48px)/1280));transform-origin:top center;
+         margin-bottom:calc(-720px * (1 - (100vw - 48px)/1280))}
+}
+/* 배경 도트 패턴 — 가장자리에만, 가운데는 침범하지 않는다 */
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(var(--mint1) 1px,transparent 1px);
+  background-size:14px 14px;opacity:.35;
+  mask-image:radial-gradient(ellipse 62% 55% at 50% 50%,transparent 60%,#000 100%);
+  -webkit-mask-image:radial-gradient(ellipse 62% 55% at 50% 50%,transparent 60%,#000 100%)}
+
+/* ── 공통 ── */
+.head{text-align:center;position:relative;z-index:1}
+.head h2{font-size:var(--t2);font-weight:400;line-height:1.2}
+.head .lead{font-size:var(--t3);margin-top:10px}
+.grid{display:grid;gap:var(--gap);margin-top:24px;flex:1;position:relative;z-index:1}
+.g-3{grid-template-columns:1fr 1.6fr 1fr}
+.g-even{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--card);border-radius:var(--radius);padding:20px;
+      box-shadow:0 2px 10px rgba(15,53,55,.07);display:flex;flex-direction:column}
+.card.tint{background:var(--mint3);box-shadow:none}
+.card h3{font-size:var(--t4);color:var(--accent);text-align:center;margin-bottom:14px}
+.card p,.card li{font-size:var(--t5);line-height:1.55}
+
+/* 아이콘 + 텍스트 행 */
+.row{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.ico{width:32px;height:32px;border-radius:50%;background:var(--mint1);flex:none;
+     display:flex;align-items:center;justify-content:center;font-size:13px;
+     color:var(--accent);font-weight:700}
+
+/* 하단 가로 띠 */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--mint3);
+       border-radius:var(--radius);padding:16px 20px;margin-top:var(--gap);
+       position:relative;z-index:1}
+.strip>div{display:flex;gap:12px;align-items:center;padding:0 16px}
+.strip>div+div{border-left:1px solid var(--line)}
+.strip b{display:block;font-size:var(--t5);color:var(--accent)}
+.strip span{font-size:var(--t5)}
+
+/* 푸터 바 */
+.foot{background:var(--deep);color:#fff;border-radius:10px;padding:12px 20px;
+      display:flex;justify-content:space-between;font-size:var(--t6);
+      letter-spacing:.12em;margin-top:var(--gap);position:relative;z-index:1}
+
+/* 차트 (가로 막대) */
+.bars{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.bar{display:grid;grid-template-columns:88px 1fr 38px;align-items:center;gap:8px;
+     font-size:12px}
+.bar .track{height:14px;background:#EDF4F1;border-radius:3px}
+.bar .fill{height:100%;background:var(--mint2);border-radius:3px}
+.bar.key .fill{background:var(--accent)}
+
+/* ── 표지 ── */
+.layout-cover{justify-content:center}
+.layout-cover .eyebrow{font-size:var(--t6);letter-spacing:.14em;color:var(--deep);
+    border-left:3px solid var(--accent);padding-left:12px;margin-bottom:32px;
+    position:relative;z-index:1}
+.layout-cover h1{font-size:var(--t1);font-weight:400;line-height:1.15;max-width:900px;
+    position:relative;z-index:1}
+.layout-cover .pill{display:inline-block;background:var(--mint1);border-radius:999px;
+    padding:10px 20px;font-size:var(--t3);margin-top:32px;align-self:flex-start;
+    position:relative;z-index:1}
+</style>
+</head>
+<body>
+
+<!-- ══ 표지 ══ -->
+<section class="slide layout-cover">
+  <div class="eyebrow">분야 / 세부 주제</div>
+  <h1>보고서 제목을<br>두세 줄로</h1>
+  <div class="pill">한 줄 요약 또는 부제</div>
+</section>
+
+<!-- ══ 개요형: 3열 카드 + 하단 띠 ══ -->
+<section class="slide">
+  <div class="head">
+    <h2>슬라이드 제목</h2>
+    <div class="lead">이 장에서 전달할 내용을 한 문장으로</div>
+  </div>
+  <div class="grid g-3">
+    <div class="card tint">
+      <h3>요약 항목</h3>
+      <div class="row"><div class="ico">01</div><p>핵심 사실 한 줄</p></div>
+      <div class="row"><div class="ico">02</div><p>핵심 사실 한 줄</p></div>
+      <div class="row"><div class="ico">03</div><p>핵심 사실 한 줄</p></div>
+    </div>
+    <div class="card">
+      <h3>가운데 주요 도식</h3>
+      <p>가장 넓은 칸. 도식·이미지·플로우가 들어간다.</p>
+    </div>
+    <div class="card">
+      <h3>보조 지표</h3>
+      <div class="bars">
+        <div class="bar key"><span>지표 A</span>
+          <div class="track"><div class="fill" style="width:92%"></div></div><span>92</span></div>
+        <div class="bar"><span>지표 B</span>
+          <div class="track"><div class="fill" style="width:64%"></div></div><span>64</span></div>
+        <div class="bar"><span>지표 C</span>
+          <div class="track"><div class="fill" style="width:41%"></div></div><span>41</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="strip">
+    <div><div class="ico">▪</div><div><b>항목 1</b><span>한 줄 설명</span></div></div>
+    <div><div class="ico">▪</div><div><b>항목 2</b><span>한 줄 설명</span></div></div>
+    <div><div class="ico">▪</div><div><b>항목 3</b><span>한 줄 설명</span></div></div>
+  </div>
+  <div class="foot"><span>분야 / 세부 주제</span><span>PAGE 02</span></div>
+</section>
+
+<!-- ══ 요약·상세형: 균등 3열 ══ -->
+<section class="slide">
+  <div class="head">
+    <h2>요약과 상세</h2>
+    <div class="lead">읽는 사람이 혼자 이해할 수 있게 정리한다</div>
+  </div>
+  <div class="grid g-even">
+    <div class="card"><h3>출처·자료</h3>
+      <div class="row"><div class="ico">▪</div><p>원 자료명과 링크</p></div>
+      <div class="row"><div class="ico">▪</div><p>수집 범위와 기간</p></div>
+    </div>
+    <div class="card"><h3>핵심 결론</h3>
+      <div class="row"><div class="ico">▪</div><p>결론 한 줄</p></div>
+      <div class="row"><div class="ico">▪</div><p>결론 한 줄</p></div>
+      <div class="row"><div class="ico">▪</div><p>결론 한 줄</p></div>
+    </div>
+    <div class="card"><h3>연구 정보</h3>
+      <div class="row"><div class="ico">▪</div><p><b>주제:</b> …</p></div>
+      <div class="row"><div class="ico">▪</div><p><b>방법:</b> …</p></div>
+      <div class="row"><div class="ico">▪</div><p><b>한계:</b> …</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>분야 / 세부 주제</span><span>PAGE 03</span></div>
+</section>
+
+</body>
+</html>

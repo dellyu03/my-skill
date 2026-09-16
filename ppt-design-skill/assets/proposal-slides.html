@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>제안서형 슬라이드 골격</title>
+<style>
+/* ─────────────────────────────────────────────
+   디자인 토큰 — 제안서형
+   색을 바꾸려면 아래 :root 블록만 다른 프리셋으로 교체한다.
+   프리셋 A~E 는 이 블록 바로 아래 주석에 들어 있다.
+   ───────────────────────────────────────────── */
+:root{
+  /* ── 프리셋 A. 인디고 (기본값) ── */
+  --accent:#3A4CA8;    /* 챕터 키커, 번호 배지, 카드 제목, 표 헤더, 대형 숫자 */
+  --accent2:#697ACE;   /* 배지·차트 2계열 */
+  --tint:#D6DBF6;      /* 카드 배경, 강조 박스 */
+  --ink:#202125;       /* 제목·본문 */
+  --muted:#595C6A;     /* 보조 설명, 푸터 */
+  --line:#C9C9C9;      /* 표 괘선, 점선 커넥터 */
+  --bg:#FFFFFF;        /* 슬라이드 배경 */
+  --card:#F4F5F9;      /* 카드면 */
+  --pop:var(--accent2);/* 장식 도형 전용. C 프리셋만 다른 색을 쓴다 */
+
+  --font:"Pretendard",-apple-system,"Apple SD Gothic Neo",
+         "Malgun Gothic","Noto Sans KR",sans-serif;
+
+  --t1:62px;  /* 표지 제목 */
+  --t2:40px;  /* 슬라이드 제목 */
+  --t3:54px;  /* 대형 숫자 */
+  --t4:18px;  /* 카드 제목 */
+  --t5:14px;  /* 본문 */
+  --t6:13px;  /* 챕터 키커 */
+  --t7:10px;  /* 캡션·푸터 */
+
+  --pad:48px;
+  --gap:16px;
+  --radius:14px;
+}
+
+/* ── 프리셋 교체용 ──────────────────────────────
+   B. 청회색 — 숫자·표가 많은 성과보고서
+   --accent:#74A4CE; --accent2:#1B274D; --tint:#E9EFF3;
+   --ink:#3C4043; --muted:#787878; --line:#C9C9C9;
+   --bg:#FFFFFF; --card:#F5F7F9;
+
+   C. 코발트 + 크림 — 오리엔테이션·행사 안내 (배경이 크림)
+   --accent:#6277DE; --accent2:#3A54D8; --tint:#F6F7FF;
+   --ink:#282828; --muted:#6B6B6B; --line:#D8D4C2;
+   --bg:#F1ECD9; --card:#FFFFFF; --pop:#FB7830;
+
+   D. 퍼플 — 고밀도 포트폴리오·이력서
+   --accent:#9C7ADE; --accent2:#805DC7; --tint:#F1EBFB;
+   --ink:#000000; --muted:#787878; --line:#DDDDE2;
+   --bg:#FFFFFF; --card:#F9F9FA;
+
+   E. 다크 일렉트릭 — 화면 발표 전용 (인쇄 금지)
+   --accent:#2671FF; --accent2:#9FC1FF; --tint:#1A1A1A;
+   --ink:#FFFFFF; --muted:#9E9E9E; --line:#333333;
+   --bg:#000000; --card:#141414;
+   ───────────────────────────────────────────── */
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#E8E9EE;font-family:var(--font);display:flex;flex-direction:column;
+     align-items:center;gap:24px;padding:24px}
+.slide{width:1280px;height:720px;background:var(--bg);color:var(--ink);flex:none;
+       padding:var(--pad);display:flex;flex-direction:column;position:relative;
+       overflow:hidden}
+@media (max-width:1340px){
+  .slide{transform:scale(calc((100vw - 48px)/1280));transform-origin:top center;
+         margin-bottom:calc(-720px * (1 - (100vw - 48px)/1280))}
+}
+
+/* ── 공통 크롬 ─────────────────────────────────
+   본문 슬라이드는 상단 키커+제목, 하단 푸터를 단다.
+   표지·디바이더·마무리에는 붙이지 않는다. */
+.kicker{font-size:var(--t6);color:var(--accent);text-align:center;font-weight:500;
+        letter-spacing:.02em}
+.title{font-size:var(--t2);font-weight:700;text-align:center;line-height:1.25;
+       margin-top:6px}
+.lead{font-size:var(--t5);color:var(--muted);text-align:center;margin-top:10px}
+.body{flex:1;margin-top:32px;position:relative;z-index:1;min-height:0}
+.footer{position:absolute;left:var(--pad);right:var(--pad);bottom:20px;
+        display:flex;justify-content:space-between;font-size:var(--t7);color:var(--muted)}
+
+/* 가장자리 장식 — 제안서형에서만 허용. 콘텐츠를 침범하지 않는다 */
+.deco{position:absolute;border-radius:50%;background:var(--tint);opacity:.55;
+      pointer-events:none;z-index:0}
+.deco-lg{width:420px;height:420px;right:-90px;top:-80px}
+.deco-sm{width:200px;height:200px;right:120px;bottom:-60px;opacity:.35}
+
+/* ── 부품 ── */
+.badge{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;
+       font-size:var(--t5);font-weight:600;display:flex;align-items:center;
+       justify-content:center;flex:none}
+.card{background:var(--card);border-radius:var(--radius);padding:22px;
+      display:flex;flex-direction:column}
+.card.tint{background:var(--tint)}
+.card h3{font-size:var(--t4);font-weight:600;color:var(--accent);margin-bottom:10px}
+.card p,.card li{font-size:var(--t5);line-height:1.6;color:var(--muted)}
+.rule{height:2px;background:var(--accent);width:120px;margin:14px auto 0}
+
+/* ── 1. 표지 ── */
+.l-cover{justify-content:center}
+.l-cover .org{font-size:var(--t4);color:var(--accent);font-weight:600}
+.l-cover h1{font-size:var(--t1);font-weight:700;line-height:1.2;margin:28px 0 18px;
+            color:var(--accent)}
+.l-cover .sub{font-size:var(--t4);color:var(--muted)}
+.l-cover .meta{display:flex;gap:14px;margin-top:64px;align-items:center}
+.l-cover .pill{background:var(--accent2);color:#fff;font-size:var(--t7);
+               padding:5px 14px;border-radius:999px}
+.l-cover .meta span{font-size:var(--t5);color:var(--muted);margin-right:12px}
+
+/* ── 2. 목차 ── */
+.l-agenda .grid{display:grid;grid-template-columns:repeat(3,1fr);
+                gap:36px 24px;margin-top:8px}
+.l-agenda .item{text-align:center}
+.l-agenda .badge{margin:0 auto 14px}
+.l-agenda h3{font-size:var(--t4);font-weight:700;margin-bottom:8px}
+.l-agenda p{font-size:var(--t5);color:var(--muted);line-height:1.8}
+
+/* ── 3. 섹션 전환 ── */
+.l-divider{background:var(--accent);color:#fff;align-items:center;
+           justify-content:center;text-align:center}
+.l-divider .badge{background:rgba(255,255,255,.22);width:58px;height:58px;
+                  font-size:var(--t4);margin-bottom:20px}
+.l-divider h2{font-size:var(--t1);font-weight:700}
+.l-divider .next{font-size:var(--t4);opacity:.7;margin-top:14px}
+
+/* ── 4. 3열 카드 ── */
+.l-cards-3 .body{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+
+/* ── 5. 2×3 카드 그리드 + 좌측 리드 ── */
+.l-cards-grid .body{display:grid;grid-template-columns:1fr 2.4fr;gap:28px}
+.l-cards-grid .leadbox h3{font-size:28px;font-weight:700;line-height:1.35}
+.l-cards-grid .leadbox p{font-size:var(--t5);color:var(--muted);margin-top:10px}
+.l-cards-grid .cells{display:grid;grid-template-columns:repeat(3,1fr);
+                     grid-template-rows:repeat(2,1fr);gap:var(--gap)}
+.l-cards-grid .cell{background:var(--card);border-radius:var(--radius);
+                    display:flex;align-items:center;justify-content:center;
+                    text-align:center;font-size:var(--t4);font-weight:600;
+                    color:var(--accent);line-height:1.4;padding:12px}
+.l-cards-grid .cell:nth-child(2n){background:var(--tint)}
+
+/* ── 6. 번호 카드 N열 ── */
+.l-numbered .body{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--gap);
+                  padding-top:14px}
+.l-numbered .col{background:var(--card);border-radius:var(--radius);padding:26px 16px 20px;
+                 position:relative;text-align:center}
+.l-numbered .col:nth-child(2n){background:var(--tint)}
+.l-numbered .col .badge{position:absolute;top:-16px;left:14px;width:30px;height:30px;
+                        font-size:var(--t7)}
+.l-numbered .col h3{font-size:var(--t4);font-weight:700;color:var(--accent);
+                    margin-bottom:12px;line-height:1.35}
+.l-numbered .col p{font-size:var(--t5);color:var(--muted);line-height:1.6}
+
+/* ── 7. 좌우 2분할 ── */
+.l-split .body{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.l-split .colhead{font-size:var(--t4);font-weight:700;margin-bottom:16px;
+                  display:flex;align-items:center;gap:8px}
+.l-split .colhead::before{content:"";width:8px;height:8px;border-radius:50%;
+                          background:var(--accent)}
+.l-split .pill-list{display:flex;flex-direction:column;gap:10px}
+.l-split .pill-item{border:1.5px solid var(--accent2);border-radius:999px;
+                    padding:11px 18px;font-size:var(--t5);text-align:center;
+                    color:var(--ink)}
+.l-split .stack{display:flex;flex-direction:column}
+.l-split .visual{background:var(--card);border-radius:var(--radius);flex:1;
+                 display:flex;align-items:center;justify-content:center;
+                 font-size:var(--t5);color:var(--muted)}
+
+/* ── 8. 대형 숫자 강조 ── */
+.l-bignum .body{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+                align-content:center}
+.l-bignum .stat{text-align:center}
+.l-bignum .num{font-size:var(--t3);font-weight:700;color:var(--accent);line-height:1}
+.l-bignum .label{font-size:var(--t4);font-weight:600;margin-top:14px}
+.l-bignum .note{font-size:var(--t5);color:var(--muted);margin-top:8px;line-height:1.6}
+
+/* ── 9. 표 + 요약 체크 ── */
+.l-table table{width:100%;border-collapse:collapse;font-size:var(--t5)}
+.l-table th{background:var(--accent);color:#fff;font-weight:600;padding:13px;
+            text-align:center}
+.l-table td{padding:13px;text-align:center;border-bottom:1px solid var(--line);
+            color:var(--muted)}
+.l-table .takeaways{display:flex;align-items:center;gap:36px;margin-top:26px}
+.l-table .takeaways h3{font-size:22px;font-weight:700;flex:none}
+.l-table .checks{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px}
+.l-table .checks div{font-size:var(--t5)}
+.l-table .checks div::before{content:"✓ ";color:var(--accent);font-weight:700}
+
+/* ── 10. 마무리 ── */
+.l-closing{justify-content:center}
+.l-closing h1{font-size:var(--t1);font-weight:700;color:var(--accent);line-height:1.2}
+.l-closing p{font-size:var(--t4);color:var(--muted);margin-top:20px;line-height:1.6}
+.l-closing .contact{margin-top:60px;font-size:var(--t5);color:var(--muted);line-height:1.9}
+</style>
+</head>
+<body>
+
+<!-- 1. 표지 ─────────────────────────────────── -->
+<section class="slide l-cover">
+  <div class="deco deco-lg"></div>
+  <div class="deco deco-sm"></div>
+  <div class="org">동아리명 · 소속</div>
+  <h1>여기에 제안의<br>핵심 메시지를</h1>
+  <div class="sub">한 줄로 무엇을 하겠다는 것인지 설명합니다</div>
+  <div class="meta">
+    <span class="pill">작성자</span><span>홍길동</span>
+    <span class="pill">일자</span><span>2026. 09. 15</span>
+  </div>
+</section>
+
+<!-- 2. 목차 ─────────────────────────────────── -->
+<section class="slide l-agenda">
+  <div class="title">목차</div>
+  <div class="body">
+    <div class="grid">
+      <div class="item"><div class="badge">01</div><h3>배경</h3>
+        <p>추진 배경<br>현황 및 문제점</p></div>
+      <div class="item"><div class="badge">02</div><h3>제안 개요</h3>
+        <p>목표<br>추진 전략</p></div>
+      <div class="item"><div class="badge">03</div><h3>구성</h3>
+        <p>전체 구조<br>주요 기능</p></div>
+      <div class="item"><div class="badge">04</div><h3>검증</h3>
+        <p>실험 설계<br>결과</p></div>
+      <div class="item"><div class="badge">05</div><h3>일정</h3>
+        <p>단계별 계획<br>리스크 대응</p></div>
+      <div class="item"><div class="badge">06</div><h3>기대효과</h3>
+        <p>정량 효과<br>차별점</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 섹션 전환 ─────────────────────────────── -->
+<section class="slide l-divider">
+  <div class="badge">01</div>
+  <h2>배경</h2>
+  <div class="next">Next Page →</div>
+</section>
+
+<!-- 4. 3열 카드 ─────────────────────────────── -->
+<section class="slide l-cards-3">
+  <div class="kicker">1. 배경</div>
+  <div class="title">현황 및 문제점</div>
+  <div class="body">
+    <div class="card"><h3>데이터 분산</h3>
+      <p>여러 시스템에 흩어져 있어 통합 조회가 되지 않습니다.</p></div>
+    <div class="card tint"><h3>기준 불일치</h3>
+      <p>형식과 기준이 서로 달라 비교 분석에 전처리 비용이 큽니다.</p></div>
+    <div class="card"><h3>공유 지연</h3>
+      <p>부서 간 공유가 수작업이라 의사결정까지 시간이 걸립니다.</p></div>
+  </div>
+  <div class="footer"><span>소속 · 프로젝트명</span><span>04</span></div>
+</section>
+
+<!-- 5. 2×3 카드 그리드 ───────────────────────── -->
+<section class="slide l-cards-grid">
+  <div class="kicker">1. 배경</div>
+  <div class="title">구축 필요성</div>
+  <div class="body">
+    <div class="leadbox">
+      <h3>데이터 중심<br>운영으로 전환</h3>
+      <p>여섯 가지 축에서 개선이 필요합니다.</p>
+    </div>
+    <div class="cells">
+      <div class="cell">데이터<br>통합관리</div>
+      <div class="cell">실시간<br>정보 제공</div>
+      <div class="cell">업무<br>자동화</div>
+      <div class="cell">근거 기반<br>의사결정</div>
+      <div class="cell">품질<br>표준화</div>
+      <div class="cell">AI 활용<br>기반 마련</div>
+    </div>
+  </div>
+  <div class="footer"><span>소속 · 프로젝트명</span><span>05</span></div>
+</section>
+
+<!-- 6. 번호 카드 5열 ─────────────────────────── -->
+<section class="slide l-numbered">
+  <div class="kicker">2. 제안 개요</div>
+  <div class="title">제안 목표</div>
+  <div class="body">
+    <div class="col"><div class="badge">01</div><h3>수집<br>자동화</h3>
+      <p>내·외부 데이터를 자동 수집해 수작업을 줄입니다.</p></div>
+    <div class="col"><div class="badge">02</div><h3>데이터<br>표준화</h3>
+      <p>동일한 기준과 형식으로 품질을 확보합니다.</p></div>
+    <div class="col"><div class="badge">03</div><h3>통합<br>저장</h3>
+      <p>하나의 저장소에 통합해 일관성을 유지합니다.</p></div>
+    <div class="col"><div class="badge">04</div><h3>분석<br>제공</h3>
+      <p>통계·시각화로 근거 기반 판단을 지원합니다.</p></div>
+    <div class="col"><div class="badge">05</div><h3>AI 활용<br>기반</h3>
+      <p>예측 분석과 지능형 서비스 환경을 마련합니다.</p></div>
+  </div>
+  <div class="footer"><span>소속 · 프로젝트명</span><span>07</span></div>
+</section>
+
+<!-- 7. 좌우 2분할 ───────────────────────────── -->
+<section class="slide l-split">
+  <div class="kicker">3. 구성</div>
+  <div class="title">구축 범위 / 추진 전략</div>
+  <div class="body">
+    <div>
+      <div class="colhead">주요 문제점</div>
+      <div class="pill-list">
+        <div class="pill-item">데이터가 여러 시스템에 흩어져 있음</div>
+        <div class="pill-item">형식과 기준이 서로 다름</div>
+        <div class="pill-item">분석까지 시간이 많이 소요</div>
+        <div class="pill-item">부서 간 공유가 어려움</div>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="colhead">대응 방향</div>
+      <div class="visual">도식 · 차트 · 이미지 자리</div>
+    </div>
+  </div>
+  <div class="footer"><span>소속 · 프로젝트명</span><span>09</span></div>
+</section>
+
+<!-- 8. 대형 숫자 강조 ────────────────────────── -->
+<section class="slide l-bignum">
+  <div class="kicker">4. 검증</div>
+  <div class="title">정량 검증 결과</div>
+  <div class="body">
+    <div class="stat"><div class="num">0.4초</div><div class="label">평균 응답 지연</div>
+      <div class="note">3.0초 → 0.4초, 큐 분리 적용 후</div></div>
+    <div class="stat"><div class="num">+23%p</div><div class="label">정확도</div>
+      <div class="note">베이스라인 대비, 테스트셋 1,200건</div></div>
+    <div class="stat"><div class="num">68%</div><div class="label">수작업 감소</div>
+      <div class="note">주당 12시간 → 3.8시간</div></div>
+  </div>
+  <div class="footer"><span>소속 · 프로젝트명</span><span>12</span></div>
+</section>
+
+<!-- 9. 표 + 요약 체크 ────────────────────────── -->
+<section class="slide l-table">
+  <div class="kicker">5. 주요 기능</div>
+  <div class="title">기능 구성</div>
+  <div class="body">
+    <table>
+      <tr><th>기능</th><th>내용</th><th>활용 예시</th></tr>
+      <tr><td>통합 대시보드</td><td>실시간 현황 및 주요 지표</td><td>처리 현황, 집행률</td></tr>
+      <tr><td>데이터 분석</td><td>통계 및 추세 분석</td><td>월별 추이, 구간별 비교</td></tr>
+      <tr><td>AI 분석</td><td>질의응답 및 예측</td><td>원인 분석, 수요 예측</td></tr>
+      <tr><td>검색·공유</td><td>조회 및 권한 관리</td><td>부서 간 공유, 통합 검색</td></tr>
+    </table>
+    <div class="takeaways">
+      <h3>핵심 기대효과</h3>
+      <div class="checks">
+        <div>근거 기반 의사결정 지원</div>
+        <div>업무 효율 향상</div>
+        <div>실시간 정보 제공</div>
+        <div>데이터 가치 극대화</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>소속 · 프로젝트명</span><span>14</span></div>
+</section>
+
+<!-- 10. 마무리 ──────────────────────────────── -->
+<section class="slide l-closing">
+  <div class="deco deco-lg"></div>
+  <div class="deco deco-sm"></div>
+  <h1>들어주셔서<br>감사합니다.</h1>
+  <p>질문은 언제든 편하게 주십시오.</p>
+  <div class="contact">
+    홍길동 · 동아리명<br>
+    email@example.com
+  </div>
+</section>
+
+</body>
+</html>

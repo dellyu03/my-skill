@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>슬라이드</title>
+<style>
+/* ─────────────────────────────────────────────
+   디자인 토큰 — 색·폰트 수정은 여기만 고친다
+   프리셋 A 딥네이비 (기본) / B 모노+레드 / C 다크네이비
+   ───────────────────────────────────────────── */
+:root{
+  --bg:#FFFFFF;
+  --text:#051C2C;
+  --accent:#2251FF;
+  --muted:#C8CDD3;
+  --soft:#F2F4F7;        /* 근거 블록 배경 */
+
+  --font:"Pretendard","Pretendard Variable",-apple-system,"Apple SD Gothic Neo",
+         "Malgun Gothic","Noto Sans KR",sans-serif;
+
+  --t1:40px;  /* 표지 제목 */
+  --t2:26px;  /* 명사형 정보 제목 */
+  --t3:18px;  /* 근거 헤드 */
+  --t4:15px;  /* 본문 */
+  --t5:11px;  /* 출처·트래커 */
+
+  --pad:56px;
+  --gap:24px;
+}
+
+/* ── 캔버스 ── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#E5E7EA;font-family:var(--font);display:flex;flex-direction:column;
+     align-items:center;gap:24px;padding:24px}
+.slide{width:1280px;height:720px;background:var(--bg);color:var(--text);padding:var(--pad);
+       display:flex;flex-direction:column;position:relative;overflow:hidden;flex:none}
+@media (max-width:1340px){
+  .slide{transform:scale(calc((100vw - 48px)/1280));transform-origin:top center;
+         margin-bottom:calc(-720px * (1 - (100vw - 48px)/1280))}
+}
+
+/* ── 슬라이드 공통 골격: 트래커 / 액션타이틀 / 바디 / 키커 / 출처 ── */
+.tracker{display:flex;gap:20px;font-size:var(--t5);color:var(--muted);
+         letter-spacing:.02em;margin-bottom:20px}
+.tracker .on{color:var(--text);font-weight:700}
+.tracker .no{margin-left:auto}
+
+.atitle{font-size:var(--t2);font-weight:700;line-height:1.35;padding-bottom:14px;
+        border-bottom:2px solid var(--text);max-width:1000px}
+
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;
+      padding:var(--gap) 0}
+p,li{font-size:var(--t4);line-height:1.65}
+
+.kicker{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--muted);
+        padding-top:14px;font-size:var(--t4);font-weight:600}
+.kicker::before{content:"";width:4px;align-self:stretch;background:var(--accent);flex:none}
+.source{font-size:var(--t5);color:var(--muted);margin-top:10px}
+
+/* ── 1. cover ── */
+.layout-cover{justify-content:center}
+.layout-cover h1{font-size:var(--t1);font-weight:700;line-height:1.3;max-width:880px}
+.layout-cover .sub{font-size:var(--t3);color:var(--accent);margin-top:16px;font-weight:600}
+.layout-cover .meta{font-size:var(--t4);color:var(--text);opacity:.6;margin-top:56px;
+                    line-height:1.9}
+.layout-cover .bar{width:64px;height:4px;background:var(--accent);margin-bottom:32px}
+
+/* ── 2. exec-summary ── */
+.layout-exec .verdict{background:var(--soft);border-left:4px solid var(--accent);
+                      padding:20px 24px;font-size:var(--t3);font-weight:700;line-height:1.5}
+.layout-exec .three{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:28px}
+.layout-exec .three h3{font-size:var(--t4);font-weight:700;color:var(--accent);
+                       padding-bottom:8px;border-bottom:1px solid var(--muted);margin-bottom:12px}
+
+/* ── 3. tracker (섹션 구분) ── */
+.layout-divider{justify-content:center}
+.layout-divider .step{font-size:var(--t5);color:var(--accent);margin-bottom:12px}
+.layout-divider h2{font-size:var(--t1);font-weight:700}
+.layout-divider ol{margin-top:28px;list-style:none;display:flex;flex-direction:column;gap:8px}
+.layout-divider li{color:var(--muted);font-size:var(--t4)}
+.layout-divider li.on{color:var(--text);font-weight:700}
+
+/* ── 4. evidence (기본형: 근거 3열) ── */
+.layout-evidence .three{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.layout-evidence h3{font-size:var(--t4);font-weight:700;padding-bottom:8px;
+                    border-bottom:1px solid var(--muted);margin-bottom:12px}
+.layout-evidence ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.layout-evidence li{padding-left:14px;position:relative}
+.layout-evidence li::before{content:"";position:absolute;left:0;top:10px;width:6px;height:1px;
+                            background:var(--accent)}
+
+/* ── 5. chart ── */
+.layout-chart .split{display:grid;grid-template-columns:1.5fr 1fr;gap:40px;
+                     align-items:center;height:100%}
+.bars{display:flex;flex-direction:column;gap:14px}
+.bar-row{display:grid;grid-template-columns:96px 1fr 56px;align-items:center;gap:12px;
+         font-size:var(--t4)}
+.bar-row .track{height:22px;background:var(--soft)}
+.bar-row .fill{height:100%;background:var(--muted)}
+.bar-row.key .fill{background:var(--accent)}
+.bar-row.key{font-weight:700}
+.bar-row .val{text-align:right}
+
+/* ── 6. matrix (2×2) ── */
+.layout-matrix .grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
+                     gap:2px;background:var(--muted);height:100%}
+.layout-matrix .cell{background:var(--bg);padding:20px}
+.layout-matrix .cell.key{background:var(--soft);border:2px solid var(--accent)}
+.layout-matrix h3{font-size:var(--t4);font-weight:700;margin-bottom:8px}
+
+/* ── 7. process (셰브론) ── */
+.layout-process .flow{display:flex;align-items:stretch;gap:8px;height:160px}
+.step-box{flex:1;background:var(--soft);padding:20px;display:flex;flex-direction:column;
+          justify-content:center;clip-path:polygon(0 0,calc(100% - 20px) 0,100% 50%,
+          calc(100% - 20px) 100%,0 100%,20px 50%)}
+.step-box:first-child{clip-path:polygon(0 0,calc(100% - 20px) 0,100% 50%,
+                      calc(100% - 20px) 100%,0 100%)}
+.step-box.key{background:var(--accent);color:var(--bg)}
+.step-box .n{font-size:var(--t5);opacity:.7;margin-bottom:6px}
+.step-box h3{font-size:var(--t4);font-weight:700}
+
+/* ── 8. compare (표) ── */
+.layout-compare table{width:100%;border-collapse:collapse;font-size:var(--t4)}
+.layout-compare th,.layout-compare td{text-align:left;padding:14px 12px;
+                                      border-bottom:1px solid var(--muted);vertical-align:top}
+.layout-compare th{font-size:var(--t5);color:var(--text);opacity:.6;font-weight:700;
+                   border-bottom:2px solid var(--text)}
+.layout-compare td.key{color:var(--accent);font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- ══ 1. 표지 ══ -->
+<section class="slide layout-cover">
+  <div class="bar"></div>
+  <h1>프로젝트 제목을 여기에</h1>
+  <div class="sub">결론을 한 문장으로 — 이 덱이 주장하는 것</div>
+  <div class="meta">소속 · 이름<br>2026.00.00</div>
+</section>
+
+<!-- ══ 2. 핵심 요약 (결론 1 + 근거 3) ══ -->
+<section class="slide layout-exec">
+  <div class="tracker"><span class="on">핵심 요약</span><span>문제</span><span>접근</span>
+    <span>결과</span><span class="no">2 / 12</span></div>
+  <div class="atitle">핵심 요약</div>
+  <div class="body">
+    <div class="verdict">가장 중요한 주장 한 문장. 이 장만 보고 나가도 전달돼야 하는 내용.</div>
+    <div class="three">
+      <div><h3>근거 1</h3><p>주장을 받치는 사실. 숫자가 있으면 넣는다.</p></div>
+      <div><h3>근거 2</h3><p>서로 겹치지 않는 다른 축의 근거.</p></div>
+      <div><h3>근거 3</h3><p>셋으로 묶이지 않으면 MECE가 아니다.</p></div>
+    </div>
+  </div>
+  <div class="kicker">그래서 무엇을 해야 하는가 — So-what 한 줄</div>
+</section>
+
+<!-- ══ 3. 기본형: 근거 3열 ══ -->
+<section class="slide layout-evidence">
+  <div class="tracker"><span>핵심 요약</span><span class="on">문제</span><span>접근</span>
+    <span>결과</span><span class="no">3 / 12</span></div>
+  <div class="atitle">사용자 이탈 구간 분석</div>
+  <div class="body">
+    <div class="three">
+      <div><h3>축 1</h3><ul><li>근거 한 줄</li><li>근거 한 줄</li></ul></div>
+      <div><h3>축 2</h3><ul><li>근거 한 줄</li><li>근거 한 줄</li></ul></div>
+      <div><h3>축 3</h3><ul><li>근거 한 줄</li><li>근거 한 줄</li></ul></div>
+    </div>
+  </div>
+  <div class="kicker">관찰이 아니라 해석을 쓴다</div>
+  <div class="source">출처: 내부 실험 결과, 2026.00</div>
+</section>
+
+<!-- ══ 4. 차트형 ══ -->
+<section class="slide layout-chart">
+  <div class="tracker"><span>핵심 요약</span><span>문제</span><span>접근</span>
+    <span class="on">결과</span><span class="no">9 / 12</span></div>
+  <div class="atitle">응답 지연 개선 결과</div>
+  <div class="body">
+    <div class="split">
+      <div class="bars">
+        <div class="bar-row"><span>개선 전</span>
+          <div class="track"><div class="fill" style="width:100%"></div></div>
+          <span class="val">3.0s</span></div>
+        <div class="bar-row"><span>1차 최적화</span>
+          <div class="track"><div class="fill" style="width:47%"></div></div>
+          <span class="val">1.4s</span></div>
+        <div class="bar-row key"><span>큐 분리 적용</span>
+          <div class="track"><div class="fill" style="width:13%"></div></div>
+          <span class="val">0.4s</span></div>
+      </div>
+      <p>차트가 <em>보여주는</em> 것이 아니라 <em>의미하는</em> 것을 쓴다. 왜 그렇게 됐는지,
+         그래서 무엇이 가능해졌는지.</p>
+    </div>
+  </div>
+  <div class="kicker">병목은 모델이 아니라 동기 호출 구조에 있었다</div>
+  <div class="source">출처: 부하 테스트 n=500, 2026.00</div>
+</section>
+
+</body>
+</html>
